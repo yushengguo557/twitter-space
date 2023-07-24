@@ -14,6 +14,6 @@ $env:GOPROXY = "https://goproxy.cn"
 go mod tidy
 
 # c.run it
-go build .
-./twitter-space
+chmod +x ./run.sh
+./run.sh
 ```
