@@ -1,15 +1,14 @@
 package main
 
 import (
-	"time"
+	"twitter-space/config"
 	"twitter-space/db"
 	"twitter-space/global"
 	"twitter-space/tw"
 )
 
-const Period time.Duration = time.Hour * 1
-
 func init() {
+	config.InitConfig()
 	db.InitDB()
 	global.Client = tw.NewTwitterClient()
 }

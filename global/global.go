@@ -7,11 +7,13 @@ import (
 	"gorm.io/gorm"
 )
 
-type App struct {
+type Application struct {
 	Config        config.Config
 	DB            *gorm.DB
 	TwitterClient *tw.TwitterClient
 }
+
+var App = new(Application)
 
 var DB *gorm.DB
 
