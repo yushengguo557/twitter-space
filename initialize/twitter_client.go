@@ -28,7 +28,6 @@ func InitTwitterClient() {
 
 	// 2.设置代理 服务器的地址和端口
 	rawUrl := fmt.Sprintf("http://%s:%d", global.App.Config.Proxy.Host, global.App.Config.Proxy.Port)
-	log.Println("proxy: ", rawUrl)
 	proxyUrl, err := url.Parse(rawUrl)
 	if err != nil {
 		log.Fatal(err)
@@ -42,12 +41,12 @@ func InitTwitterClient() {
 
 	// 3.测试代理
 	var req *http.Request
-	req, err = http.NewRequest("GET", "https://twitter.com/", nil)
+	req, err = http.NewRequest("GET", "https://www.google.com/", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 	// 使用 context 包创建一个带有超时时间的 context
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	req = req.WithContext(ctx)
 	var resp *http.Response
@@ -61,6 +60,7 @@ func InitTwitterClient() {
 			log.Fatal(err)
 		}
 	}(resp.Body)
+	log.Println("proxy: ", rawUrl)
 
 	// 4.赋值给全局变量
 	global.App.TwitterClient = &tw.TwitterClient{
