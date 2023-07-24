@@ -39,10 +39,10 @@ func TimedUpdateSpace() {
 			err = limiter.Wait(context.Background())
 			if err != nil {
 				// 请求被限流，执行相应的操作
-				fmt.Println("请求被限流了")
+				fmt.Println("-------请求被限流了-------")
 			} else {
 				// 请求未被限流，执行相应的操作
-				fmt.Println("请求执行成功")
+				fmt.Println("-------请求执行成功-------")
 			}
 			group.Add(1)
 			go func(offset int) {
@@ -81,7 +81,7 @@ func TimedSearchSpace() {
 	limiter := rate.NewLimiter(rate.Every(15*time.Minute/25), 1) // 创建限流器
 	// 每隔 Period 搜索一次
 	for range time.NewTicker(time.Minute * 30).C {
-		// TODO: 搜索Space
+		// 1.搜索Space
 		log.Println("开始搜索...")
 		group := sync.WaitGroup{}
 		querys := []string{models.SpaceNFT, models.SpaceWEB3, models.SpaceMetaVerse, models.SpaceGame, models.SpaceDeFi}
@@ -89,10 +89,10 @@ func TimedSearchSpace() {
 			err = limiter.Wait(context.Background())
 			if err != nil {
 				// 请求被限流，执行相应的操作
-				fmt.Println("请求被限流了")
+				fmt.Println("-------请求被限流了-------")
 			} else {
 				// 请求未被限流，执行相应的操作
-				fmt.Println("请求执行成功")
+				fmt.Println("-------请求执行成功-------")
 			}
 			group.Add(1)
 			go func(query string) {
@@ -101,7 +101,7 @@ func TimedSearchSpace() {
 				if err != nil {
 					log.Println(err)
 				}
-				// TODO: 保存Space
+				// 2.保存Space
 				for _, space := range spaces {
 					err = dao.SaveTwitterSpace(space)
 					if err != nil {
@@ -122,7 +122,7 @@ func TimedLookupUser() {
 	for range time.NewTicker(time.Minute * 3).C {
 		log.Println("用户信息 - 开始...")
 		group := sync.WaitGroup{}
-		// TODO: 清空用户所属Space
+		// 1.清空用户所属Space
 		if err = global.App.DB.Model(&models.TwitterUser{}).
 			Where("data_status = ?", models.DataStatusEnable).
 			Updates(map[string]any{"space_id": nil}).
@@ -130,7 +130,7 @@ func TimedLookupUser() {
 			log.Println(err)
 		}
 
-		// TODO: 更新用户所属Space
+		// 2.更新用户所属Space
 		var ids []string
 		if err = global.App.DB.Model(&models.TwitterSpace{}).
 			Select("id").
@@ -142,10 +142,10 @@ func TimedLookupUser() {
 			err = limiter.Wait(context.Background())
 			if err != nil {
 				// 请求被限流，执行相应的操作
-				fmt.Println("请求被限流了")
+				log.Println("-------请求被限流了-------")
 			} else {
 				// 请求未被限流，执行相应的操作
-				fmt.Println("请求执行成功")
+				log.Println("-------请求执行成功-------")
 			}
 			group.Add(1)
 			go func(id string) {

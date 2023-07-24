@@ -18,7 +18,7 @@ func InitConfig() {
 	err := v.ReadInConfig()   // Find and read the config file
 	if err != nil {           // Handle errors reading the config file
 		log.Println(err)
-		panic(fmt.Errorf("fatal error config file: %w", err))
+		log.Fatal(fmt.Errorf("fatal error config file: %w", err))
 	}
 	v.WatchConfig()
 	v.OnConfigChange(func(in fsnotify.Event) {
@@ -26,11 +26,11 @@ func InitConfig() {
 		// 重载配置
 		if err = v.Unmarshal(&global.App.Config); err != nil {
 			log.Println(err)
-			panic(fmt.Errorf("unmarshal config: %w", err))
+			log.Fatal(fmt.Errorf("unmarshal config: %w", err))
 		}
 	})
 	if err = v.Unmarshal(&global.App.Config); err != nil {
 		log.Println(err)
-		panic(fmt.Errorf("unmarshal config: %w", err))
+		log.Fatal(fmt.Errorf("unmarshal config: %w", err))
 	}
 }

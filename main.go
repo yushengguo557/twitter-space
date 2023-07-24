@@ -10,8 +10,7 @@ func init() {
 
 func main() {
 	// 开始定时任务
-	//Corn()
-	TimedSearchSpace()
+	Corn()
 	// 阻塞主线程
 	var wait = make(chan struct{})
 	wait <- struct{}{}
