@@ -1,1 +1,3 @@
-/config_copy.yaml
+/vendor
+/config.yaml
+/test.go

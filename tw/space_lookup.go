@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/g8rswimmer/go-twitter/v2"
+	"github.com/yushengguo557/twitter-space/models"
+	"github.com/yushengguo557/twitter-space/utils"
+	"log"
 	"strings"
 	"time"
-	"twitter-space/models"
-	"twitter-space/utils"
-
-	"github.com/g8rswimmer/go-twitter/v2"
 )
 
 // SpaceLookup 用Space的ID获取Space信息
@@ -30,7 +30,7 @@ func (tc *TwitterClient) SpaceLookup(ids []string) (spaces []models.TwitterSpace
 		},
 	}
 
-	fmt.Println("Callout to spaces search callout")
+	log.Println("Callout to spaces search callout")
 
 	spaceResponse, err := tc.SpacesLookup(context.Background(), ids, opts)
 	if err != nil {

@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/g8rswimmer/go-twitter/v2"
+	"github.com/yushengguo557/twitter-space/models"
+	"github.com/yushengguo557/twitter-space/utils"
 	"log"
 	"strings"
 	"time"
-	"twitter-space/models"
-	"twitter-space/utils"
 )
 
 // SpaceSearch 空间搜索
@@ -32,7 +32,7 @@ func (tc *TwitterClient) SpaceSearch(query string) (spaces []models.TwitterSpace
 		State: twitter.SpaceStateAll,
 	}
 
-	fmt.Println("Callout to spaces search callout")
+	log.Println("Callout to spaces search callout")
 
 	spaceResponse, err := tc.SpacesSearch(context.Background(), query, opts)
 	if err != nil {

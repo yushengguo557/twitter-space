@@ -2,13 +2,12 @@ package tw
 
 import (
 	"context"
-	"fmt"
-	"github.com/g8rswimmer/go-twitter/v2"
+	twitter "github.com/g8rswimmer/go-twitter/v2"
+	"github.com/yushengguo557/twitter-space/models"
+	"github.com/yushengguo557/twitter-space/utils"
 	"log"
 	"strings"
 	"time"
-	"twitter-space/models"
-	"twitter-space/utils"
 )
 
 func (tc *TwitterClient) SpaceUser(id string) (users []models.TwitterUser, err error) {
@@ -29,8 +28,10 @@ func (tc *TwitterClient) SpaceUser(id string) (users []models.TwitterUser, err e
 		},
 	}
 
-	fmt.Println("Callout to spaces search callout")
+	log.Println("Callout to spaces search callout")
 
+	// id列表长度 = 1 访问的API: Spaces lookup by single ID
+	// 100 >= id列表长度 > 1 访问的API: Spaces lookup by list of IDs
 	spaceResponse, err := tc.SpacesLookup(context.Background(), []string{id}, opts)
 	if err != nil {
 		log.Printf("spaces search, err: %v\n", err)

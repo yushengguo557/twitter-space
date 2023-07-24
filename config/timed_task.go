@@ -1,5 +1,5 @@
 package config
 
 type TimedTask struct {
-	Period int `yaml:"Period"`
+	Period int `mapstructure:"period"  yaml:"period" json:"period"`
 }

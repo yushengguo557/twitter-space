@@ -1,6 +1,6 @@
 package config
 
 type Proxy struct {
-	Host string `yaml:"Host"`
-	Port int    `yaml:"Port"`
+	Host string `mapstructure:"host" yaml:"host" json:"host"`
+	Port int    `mapstructure:"port" yaml:"port" json:"port"`
 }
