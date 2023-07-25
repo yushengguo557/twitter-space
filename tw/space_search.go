@@ -14,6 +14,9 @@ import (
 
 // SpaceSearch 空间搜索
 func (tc *TwitterClient) SpaceSearch(query string) (spaces []models.TwitterSpace, err error) {
+	if !utils.HasValue(query) {
+		return nil, errors.New("query = ''")
+	}
 	log.Printf("query %s\n", query)
 	opts := twitter.SpacesSearchOpts{
 		SpaceFields: []twitter.SpaceField{

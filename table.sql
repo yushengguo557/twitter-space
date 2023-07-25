@@ -20,7 +20,7 @@ CREATE TABLE `im_twitter_space` (
 
 CREATE TABLE `im_twitter_user` (
    `id` char(24) NOT NULL COMMENT '主键id 推特用户id',
-   `name` char(48) DEFAULT '' COMMENT '姓名',
+   `name` char(64) DEFAULT '' COMMENT '姓名',
    `username` char(16) DEFAULT '' COMMENT '用户名',
    `location` varchar(255) DEFAULT '' COMMENT '位置',
    `description` varchar(255) DEFAULT '' COMMENT '描述',

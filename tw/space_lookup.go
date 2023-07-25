@@ -14,6 +14,12 @@ import (
 
 // SpaceLookup 用Space的ID获取Space信息
 func (tc *TwitterClient) SpaceLookup(ids []string) (spaces []models.TwitterSpace, err error) {
+	if len(ids) == 0 {
+		return nil, errors.New("len(ids) == 0")
+	}
+	if !utils.HasValue(ids[0]) {
+		return nil, fmt.Errorf("id = %s", ids[0])
+	}
 	opts := twitter.SpacesLookupOpts{
 		SpaceFields: []twitter.SpaceField{
 			twitter.SpaceFieldStartedAt,

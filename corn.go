@@ -59,11 +59,13 @@ func TimedUpdateSpace() {
 				spaces, err = global.App.TwitterClient.SpaceLookup(ids)
 				if err != nil {
 					log.Println(err)
+					return
 				}
 				for _, space := range spaces {
 					err = dao.SaveTwitterSpace(space)
 					if err != nil {
 						log.Println(err)
+						return
 					}
 				}
 			}(offset)
@@ -100,12 +102,14 @@ func TimedSearchSpace() {
 				spaces, err := global.App.TwitterClient.SpaceSearch(query)
 				if err != nil {
 					log.Println(err)
+					return
 				}
 				// 2.保存Space
 				for _, space := range spaces {
 					err = dao.SaveTwitterSpace(space)
 					if err != nil {
 						log.Println(err)
+						return
 					}
 				}
 			}(query)
@@ -152,10 +156,15 @@ func TimedLookupUser() {
 				defer group.Done()
 				var users []models.TwitterUser
 				users, err = global.App.TwitterClient.SpaceUser(id)
+				if err != nil {
+					log.Println(err)
+					return
+				}
 				for _, user := range users {
 					err = dao.SaveTwitterUser(user)
 					if err != nil {
 						log.Println(err)
+						return
 					}
 				}
 			}(id)
