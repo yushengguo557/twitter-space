@@ -2,6 +2,8 @@ package tw
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	twitter "github.com/g8rswimmer/go-twitter/v2"
 	"github.com/yushengguo557/twitter-space/models"
 	"github.com/yushengguo557/twitter-space/utils"
@@ -11,6 +13,10 @@ import (
 )
 
 func (tc *TwitterClient) SpaceUser(id string) (users []models.TwitterUser, err error) {
+	if !utils.HasValue(id) {
+		err = fmt.Errorf("id = %s", id)
+		return nil, err
+	}
 	opts := twitter.SpacesLookupOpts{
 		Expansions: []twitter.Expansion{
 			twitter.ExpansionInvitedUserIDs,
@@ -32,12 +38,18 @@ func (tc *TwitterClient) SpaceUser(id string) (users []models.TwitterUser, err e
 
 	// id列表长度 = 1 访问的API: Spaces lookup by single ID
 	// 100 >= id列表长度 > 1 访问的API: Spaces lookup by list of IDs
-	spaceResponse, err := tc.SpacesLookup(context.Background(), []string{id}, opts)
+	var spaceResponse *twitter.SpacesLookupResponse
+	spaceResponse, err = tc.SpacesLookup(context.Background(), []string{id}, opts)
 	if err != nil {
 		log.Printf("spaces search, err: %v\n", err)
 	}
-
+	if spaceResponse.Raw.Includes == nil {
+		return nil, errors.New("no data")
+	}
 	userObjSlice := spaceResponse.Raw.Includes.Users
+	if len(userObjSlice) == 0 {
+		return nil, errors.New("len(userObjSlice) == 0")
+	}
 	for _, userObj := range userObjSlice {
 		var createdAt time.Time
 		if utils.HasValue(userObj.CreatedAt) {

@@ -40,7 +40,6 @@ func (tc *TwitterClient) SpaceSearch(query string) (spaces []models.TwitterSpace
 		return nil, err
 	}
 	if spaceResponse.Raw == nil {
-		fmt.Println(spaceResponse.RateLimit)
 		return nil, errors.New("no data")
 	}
 	spaceObjSlice := spaceResponse.Raw.Spaces

@@ -9,6 +9,16 @@ const (
 	SpaceDeFi      string = "DeFi"
 )
 
+// SpaceStatus Space 状态
+type SpaceStatus int
+
+const (
+	SpaceStatusLive SpaceStatus = iota
+	SpaceStatusScheduled
+	SpaceStatusEnded
+	SpaceStatusCanceled
+)
+
 // 数据状态
 const (
 	DataStatusDisable int = 0
