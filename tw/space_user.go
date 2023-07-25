@@ -43,6 +43,9 @@ func (tc *TwitterClient) SpaceUser(id string) (users []models.TwitterUser, err e
 	if err != nil {
 		log.Printf("spaces search, err: %v\n", err)
 	}
+	if spaceResponse.Raw == nil {
+		return nil, errors.New("no data")
+	}
 	if spaceResponse.Raw.Includes == nil {
 		return nil, errors.New("no data")
 	}
