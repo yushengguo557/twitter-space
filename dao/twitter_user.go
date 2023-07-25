@@ -15,13 +15,18 @@ func SaveTwitterUser(user models.TwitterUser) (err error) {
 	}
 	if resp.RowsAffected > 0 {
 		log.Println("Update User: ", user.ID)
-		if err = global.App.DB.Model(&models.TwitterUser{}).Where("id = ?", user.ID).Updates(&user).Error; err != nil {
+		if err = global.App.DB.Model(&models.TwitterUser{}).
+			Where("id = ?", user.ID).
+			Updates(map[string]any{"space_id": user.SpaceId}).
+			Error; err != nil {
 			err = fmt.Errorf("update %v, err: %w", user, err)
 			return err
 		}
 	} else {
 		log.Println("Create User", user.ID)
-		if err = global.App.DB.Model(&models.TwitterUser{}).Create(&user).Error; err != nil {
+		if err = global.App.DB.Model(&models.TwitterUser{}).
+			Create(&user).
+			Error; err != nil {
 			err = fmt.Errorf("create %v, err: %w", user, err)
 			return err
 		}
