@@ -57,9 +57,10 @@ func (tc *TwitterClient) SpaceUser(id string) (users []models.TwitterUser, err e
 		return nil, errors.New("len(userObjSlice) == 0")
 	}
 	for _, userObj := range userObjSlice {
-		var createdAt time.Time
+		var createdAt *time.Time
 		if utils.HasValue(userObj.CreatedAt) {
-			createdAt, err = time.Parse(time.RFC3339Nano, userObj.CreatedAt)
+			t, err := time.Parse(time.RFC3339Nano, userObj.CreatedAt)
+			createdAt = &t
 			if err != nil {
 				return nil, err
 			}
@@ -72,7 +73,7 @@ func (tc *TwitterClient) SpaceUser(id string) (users []models.TwitterUser, err e
 			Description:     userObj.Description,
 			ProfileImageUrl: userObj.ProfileImageURL,
 			SpaceId:         id,
-			CreatedAt:       &createdAt,
+			CreatedAt:       createdAt,
 			Url:             strings.Join([]string{"https://twitter.com/", userObj.UserName}, ""),
 		}
 		users = append(users, user)

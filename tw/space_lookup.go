@@ -55,25 +55,28 @@ func (tc *TwitterClient) SpaceLookup(ids []string) (spaces []models.TwitterSpace
 		if spaceObj == nil {
 			continue
 		}
-		var startedAt time.Time
+		var startedAt *time.Time
 		if utils.HasValue(spaceObj.CreatedAt) {
-			startedAt, err = time.Parse(time.RFC3339Nano, spaceObj.StartedAt)
+			t, err := time.Parse(time.RFC3339Nano, spaceObj.StartedAt)
+			startedAt = &t
 			if err != nil {
 				err = fmt.Errorf("parse time %s, err: %w", spaceObj.StartedAt, err)
 				return nil, err
 			}
 		}
-		var endedAt time.Time
+		var endedAt *time.Time
 		if utils.HasValue(spaceObj.EndedAt) {
-			endedAt, err = time.Parse(time.RFC3339Nano, spaceObj.EndedAt)
+			t, err := time.Parse(time.RFC3339Nano, spaceObj.EndedAt)
+			endedAt = &t
 			if err != nil {
 				err = fmt.Errorf("parse time %s, err: %w", spaceObj.EndedAt, err)
 				return nil, err
 			}
 		}
-		var scheduledStart time.Time
+		var scheduledStart *time.Time
 		if utils.HasValue(spaceObj.ScheduledStart) {
-			endedAt, err = time.Parse(time.RFC3339Nano, spaceObj.ScheduledStart)
+			t, err := time.Parse(time.RFC3339Nano, spaceObj.ScheduledStart)
+			scheduledStart = &t
 			if err != nil {
 				err = fmt.Errorf("parse time %s, err: %w", spaceObj.ScheduledStart, err)
 				return nil, err
@@ -88,9 +91,9 @@ func (tc *TwitterClient) SpaceLookup(ids []string) (spaces []models.TwitterSpace
 			Lang:             spaceObj.Lang,
 			Url:              strings.Join([]string{"https://twitter.com/i/spaces/", spaceObj.ID}, ""),
 			Status:           spaceObj.State,
-			StartedAt:        &startedAt,
-			ScheduledStart:   &scheduledStart,
-			EndedAt:          &endedAt,
+			StartedAt:        startedAt,
+			ScheduledStart:   scheduledStart,
+			EndedAt:          endedAt,
 		}
 		spaces = append(spaces, space)
 	}
