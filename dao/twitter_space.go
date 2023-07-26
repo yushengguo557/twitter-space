@@ -5,13 +5,14 @@ import (
 	"github.com/yushengguo557/twitter-space/global"
 	"github.com/yushengguo557/twitter-space/models"
 	"log"
-	"time"
 )
 
 // SaveTwitterSpace 保存Space 若存在则更新 若不存在则创建
 func SaveTwitterSpace(space models.TwitterSpace) (err error) {
+	var tss []models.TwitterSpace
 	resp := global.App.DB.Model(&models.TwitterSpace{}).
-		Where("id = ?", space.ID)
+		Where("id = ?", space.ID).
+		Find(&tss)
 	if err = resp.Error; err != nil {
 		return err
 	}
@@ -22,7 +23,7 @@ func SaveTwitterSpace(space models.TwitterSpace) (err error) {
 			Updates(map[string]any{
 				"status":            space.Status,
 				"participant_count": space.ParticipantCount,
-				"ended_at":          space.EndedAt.Format(time.DateTime),
+				"ended_at":          space.EndedAt,
 			}).Error; err != nil {
 			err = fmt.Errorf("update %v, err: %w", space, err)
 			return err

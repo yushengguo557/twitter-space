@@ -72,7 +72,7 @@ func (tc *TwitterClient) SpaceUser(id string) (users []models.TwitterUser, err e
 			Description:     userObj.Description,
 			ProfileImageUrl: userObj.ProfileImageURL,
 			SpaceId:         id,
-			CreatedAt:       createdAt,
+			CreatedAt:       &createdAt,
 			Url:             strings.Join([]string{"https://twitter.com/", userObj.UserName}, ""),
 		}
 		users = append(users, user)

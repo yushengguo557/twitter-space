@@ -88,9 +88,9 @@ func (tc *TwitterClient) SpaceLookup(ids []string) (spaces []models.TwitterSpace
 			Lang:             spaceObj.Lang,
 			Url:              strings.Join([]string{"https://twitter.com/i/spaces/", spaceObj.ID}, ""),
 			Status:           spaceObj.State,
-			StartedAt:        startedAt,
-			ScheduledStart:   scheduledStart,
-			EndedAt:          endedAt,
+			StartedAt:        &startedAt,
+			ScheduledStart:   &scheduledStart,
+			EndedAt:          &endedAt,
 		}
 		spaces = append(spaces, space)
 	}

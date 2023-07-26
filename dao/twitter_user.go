@@ -8,8 +8,10 @@ import (
 )
 
 func SaveTwitterUser(user models.TwitterUser) (err error) {
+	var tus []models.TwitterUser
 	resp := global.App.DB.Model(&models.TwitterUser{}).
-		Where("id = ?", user.ID)
+		Where("id = ?", user.ID).
+		Find(&tus)
 	if err = resp.Error; err != nil {
 		return err
 	}

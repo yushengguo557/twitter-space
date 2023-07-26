@@ -129,7 +129,7 @@ func TimedLookupUser() {
 		// 1.清空用户所属Space
 		if err = global.App.DB.Model(&models.TwitterUser{}).
 			Where("data_status = ?", models.DataStatusEnable).
-			Updates(map[string]any{"space_id": nil}).
+			Updates(map[string]any{"space_id": ""}).
 			Error; err != nil {
 			log.Println(err)
 		}
