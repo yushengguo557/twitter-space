@@ -123,7 +123,7 @@ func TimedSearchSpace() {
 func TimedLookupUser() {
 	var err error
 	limiter := rate.NewLimiter(rate.Every(15*time.Minute/25), 1) // 创建限流器
-	for range time.NewTicker(time.Minute * 3).C {
+	for range time.NewTicker(time.Minute * 10).C {
 		log.Println("用户信息 - 开始...")
 		group := sync.WaitGroup{}
 		// 1.清空用户所属Space
