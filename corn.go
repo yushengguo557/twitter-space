@@ -127,12 +127,12 @@ func TimedLookupUser() {
 		log.Println("用户信息 - 开始...")
 		group := sync.WaitGroup{}
 		// 1.清空用户所属Space
-		if err = global.App.DB.Model(&models.TwitterUser{}).
-			Where("data_status = ?", models.DataStatusEnable).
-			Updates(map[string]any{"space_id": ""}).
-			Error; err != nil {
-			log.Println(err)
-		}
+		// if err = global.App.DB.Model(&models.TwitterUser{}).
+		// 	Where("data_status = ?", models.DataStatusEnable).
+		// 	Updates(map[string]any{"space_id": ""}).
+		// 	Error; err != nil {
+		// 	log.Println(err)
+		// }
 
 		// 2.更新用户所属Space
 		var ids []string

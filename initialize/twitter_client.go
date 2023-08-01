@@ -41,7 +41,7 @@ func InitTwitterClient() {
 
 	// 3.测试代理
 	var req *http.Request
-	req, err = http.NewRequest("GET", "https://www.google.com/", nil)
+	req, err = http.NewRequest("GET", "https://youtube.com/", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
