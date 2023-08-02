@@ -2,11 +2,16 @@ package models
 
 // Space标签
 const (
-	SpaceNFT       string = "NFT"
-	SpaceWEB3      string = "WEB3"
-	SpaceGame      string = "Game"
-	SpaceMetaVerse string = "MetaVerse"
-	SpaceDeFi      string = "DeFi"
+	SpaceNFT        string = "NFT"
+	SpaceWEB3       string = "WEB3"
+	SpaceGame       string = "Game"
+	SpaceMetaVerse  string = "MetaVerse"
+	SpaceDeFi       string = "DeFi"
+	SpaceDAO        string = "DAO"
+	SpaceLayer2     string = "Layer2"
+	SpaceInvestment string = "Investment"
+	SpaceInvesting  string = "Investing"
+	SpaceTechnology string = "Technology"
 )
 
 // SpaceStatus Space 状态

@@ -86,7 +86,18 @@ func TimedSearchSpace() {
 		// 1.搜索Space
 		log.Println("开始搜索...")
 		group := sync.WaitGroup{}
-		querys := []string{models.SpaceNFT, models.SpaceWEB3, models.SpaceMetaVerse, models.SpaceGame, models.SpaceDeFi}
+		querys := []string{
+			models.SpaceNFT,
+			models.SpaceWEB3,
+			models.SpaceMetaVerse,
+			models.SpaceGame,
+			models.SpaceDeFi,
+			models.SpaceDAO,
+			models.SpaceLayer2,
+			models.SpaceInvestment,
+			models.SpaceInvesting,
+			models.SpaceTechnology,
+		}
 		for _, query := range querys {
 			err = limiter.Wait(context.Background())
 			if err != nil {

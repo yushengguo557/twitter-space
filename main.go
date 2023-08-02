@@ -1,8 +1,6 @@
 package main
 
-import (
-	"github.com/yushengguo557/twitter-space/initialize"
-)
+import "github.com/yushengguo557/twitter-space/initialize"
 
 func init() {
 	initialize.Init() // 初始化
