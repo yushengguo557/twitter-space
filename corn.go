@@ -14,9 +14,114 @@ import (
 
 // Corn 周期任务
 func Corn() {
-	go TimedLookupUser()
+	//go TimedLookupUser()
 	go TimedUpdateSpace()
-	go TimedSearchSpace()
+	//go TimedSearchSpace()
+	TimedUpdate()
+}
+
+// TimedUpdate 定时更新
+func TimedUpdate() {
+	var err error
+	for range time.NewTicker(time.Minute * 15).C {
+		// 1.清空数据库 Space 相关数据
+		//err = global.App.DB.Model(&models.TwitterSpace{}).
+		//	Where("data_status = ?", models.DataStatusEnable).
+		//	Updates(map[string]any{
+		//		"data_status": models.DataStatusDisable,
+		//	}).Error
+		//if err != nil {
+		//	log.Println(err)
+		//}
+
+		// 2.搜索
+		log.Println("开始搜索...")
+		var spaces []models.TwitterSpace
+		group := sync.WaitGroup{}
+		limiter := rate.NewLimiter(rate.Every(15*time.Minute/25), 1)
+		querys := []string{
+			models.SpaceNFT,
+			models.SpaceWEB3,
+			models.SpaceMetaVerse,
+			models.SpaceGame,
+			models.SpaceDeFi,
+			models.SpaceDAO,
+			models.SpaceLayer2,
+			models.SpaceInvestment,
+			models.SpaceInvesting,
+			models.SpaceTechnology,
+		}
+		for _, query := range querys {
+			group.Add(1)
+			go func(query string) {
+				defer group.Done()
+				limiter.Wait(context.Background())
+				spaces, err = global.App.TwitterClient.SpaceSearch(query)
+				if err != nil {
+					log.Println(err)
+					return
+				}
+				// 2.保存Space
+				for _, space := range spaces {
+					err = dao.SaveTwitterSpace(space)
+					if err != nil {
+						log.Println(err)
+						return
+					}
+				}
+			}(query)
+		}
+		group.Wait()
+		log.Println("搜索结束...")
+
+		// 3.获取房间内用户
+		// limiter2 := rate.NewLimiter(rate.Every(24*time.Hour/500), 1)
+		log.Println("获取房间内的用户信息")
+		for _, space := range spaces {
+			group.Add(1)
+			go func(space models.TwitterSpace) {
+				defer group.Done()
+				// 3.1 若Space状态为 live 获取房间内所有用户的信息
+				if space.Status == "live" {
+					var users []models.TwitterUser
+					users, err = global.App.TwitterClient.SpaceUser(space.ID)
+					if err != nil {
+						log.Println(err)
+						return
+					}
+					for _, user := range users {
+						err = dao.SaveTwitterUser(user)
+						if err != nil {
+							log.Println(err)
+							return
+						}
+					}
+				} else {
+					// 3.2 若Space状态为 其他 获取主持人信息
+					var user models.TwitterUser
+					resp := global.App.DB.Model(&models.TwitterUser{}).Where("id = ?", space.CreatorId).Find(&user)
+					if resp.RowsAffected == 0 {
+						userPtr, err := global.App.TwitterClient.GetUserInfoByID(space.CreatorId)
+						if err != nil {
+							return
+						}
+						if err := dao.SaveTwitterUser(*userPtr); err != nil {
+							log.Println(err)
+							return
+						}
+					}
+					if err = global.App.DB.Model(&models.TwitterUser{}).
+						Where("id = ?", space.CreatorId).
+						Update("space_id", space.ID).
+						Error; err != nil {
+						log.Println(err)
+						return
+					}
+				}
+			}(space)
+		}
+		group.Wait()
+	}
 }
 
 // TimedUpdateSpace 定时更新 Space
