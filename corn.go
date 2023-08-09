@@ -14,10 +14,11 @@ import (
 
 // Corn 周期任务
 func Corn() {
-	//go TimedLookupUser()
+	go TimedLookupUser()
 	go TimedUpdateSpace()
-	//go TimedSearchSpace()
-	TimedUpdate()
+	go TimedSearchSpace()
+	go TimedLookupCreator()
+	//TimedUpdate()
 }
 
 // TimedUpdate 定时更新
@@ -101,7 +102,7 @@ func TimedUpdate() {
 					var user models.TwitterUser
 					resp := global.App.DB.Model(&models.TwitterUser{}).Where("id = ?", space.CreatorId).Find(&user)
 					if resp.RowsAffected == 0 {
-						userPtr, err := global.App.TwitterClient.GetUserInfoByID(space.CreatorId)
+						userPtr, err := global.App.TwitterClient.RetrieveUserInfoByID(space.CreatorId)
 						if err != nil {
 							return
 						}
@@ -287,5 +288,75 @@ func TimedLookupUser() {
 		}
 		group.Wait()
 		log.Println("用户信息 - 结束...")
+	}
+}
+
+// TimedLookupCreator 定时更新主持人 Creator
+func TimedLookupCreator() {
+	var err error
+	offset := 0
+	limit := 64
+	var total int64
+	group := sync.WaitGroup{}
+	var ids []string
+	var user *models.TwitterUser
+	limiter := rate.NewLimiter(rate.Every(24*time.Hour/500), 1) // 创建限流器 24小时500个请求
+	for range time.NewTicker(time.Minute * 10).C {
+		log.Println("开始更新主持人...")
+		if err = global.App.DB.Model(&models.TwitterSpace{}).
+			Where("`status` IN ? AND data_status = ?", []string{"ended", "canceled", "scheduled"}, models.DataStatusEnable).
+			Count(&total).Error; err != nil {
+			log.Println(err)
+		}
+
+		for offset < int(total) {
+			group.Add(1)
+			go func(offset int) {
+				defer group.Done()
+				if err = global.App.DB.Model(&models.TwitterSpace{}).
+					Select("id").
+					Where("`status` IN ? AND data_status = ?", []string{"ended", "canceled", "scheduled"}, models.DataStatusEnable).
+					Limit(limit).
+					Offset(offset).
+					Find(&ids).Error; err != nil {
+					log.Println(err)
+				}
+				for _, id := range ids {
+					// 从数据库中 查询 id 主持人是否存在
+					var users []models.TwitterUser
+					resp := global.App.DB.Model(&models.TwitterUser{}).
+						Where("id = ? AND data_status = ?", id, models.DataStatusEnable).
+						Find(&users)
+					if resp.Error != nil {
+						log.Println(err)
+						return
+					}
+					if resp.RowsAffected < 1 {
+						err = limiter.Wait(context.Background())
+						if err != nil {
+							// 请求被限流，执行相应的操作
+							fmt.Println("-------请求被限流了-------")
+						} else {
+							// 请求未被限流，执行相应的操作
+							fmt.Println("-------请求执行成功-------")
+						}
+						user, err = global.App.TwitterClient.RetrieveUserInfoByID(id)
+						if err != nil {
+							log.Println(err)
+							return
+						}
+						err = dao.SaveTwitterUser(*user)
+						if err != nil {
+							log.Println(err)
+							return
+						}
+					}
+				}
+			}(offset)
+
+			offset += limit
+		}
+		group.Wait()
+		log.Println("更新结束主持人...")
 	}
 }

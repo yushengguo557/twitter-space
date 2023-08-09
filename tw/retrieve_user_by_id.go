@@ -9,8 +9,8 @@ import (
 	"log"
 )
 
-// GetUserInfoByID 通过ID获取用户信息
-func (tc *TwitterClient) GetUserInfoByID(id string) (user *models.TwitterUser, err error) {
+// RetrieveUserInfoByID 通过ID获取用户信息
+func (tc *TwitterClient) RetrieveUserInfoByID(id string) (user *models.TwitterUser, err error) {
 	opts := twitter.UserLookupOpts{
 		Expansions: []twitter.Expansion{twitter.ExpansionPinnedTweetID},
 		UserFields: []twitter.UserField{
