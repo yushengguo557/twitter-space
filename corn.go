@@ -14,9 +14,9 @@ import (
 
 // Corn 周期任务
 func Corn() {
-	go TimedLookupUser()
-	go TimedUpdateSpace()
-	go TimedSearchSpace()
+	//go TimedLookupUser()
+	//go TimedUpdateSpace()
+	//go TimedSearchSpace()
 	go TimedLookupCreator()
 	//TimedUpdate()
 }
@@ -300,8 +300,8 @@ func TimedLookupCreator() {
 	group := sync.WaitGroup{}
 	var ids []string
 	var user *models.TwitterUser
-	limiter := rate.NewLimiter(rate.Every(24*time.Hour/500), 1) // 创建限流器 24小时500个请求
-	for range time.NewTicker(time.Minute * 10).C {
+	//limiter := rate.NewLimiter(rate.Every(24*time.Hour/500), 1) // 创建限流器 24小时500个请求
+	for range time.NewTicker(time.Minute * 1).C {
 		log.Println("开始更新主持人...")
 		if err = global.App.DB.Model(&models.TwitterSpace{}).
 			Where("`status` IN ? AND data_status = ?", []string{"ended", "canceled", "scheduled"}, models.DataStatusEnable).
@@ -332,14 +332,14 @@ func TimedLookupCreator() {
 						return
 					}
 					if resp.RowsAffected < 1 {
-						err = limiter.Wait(context.Background())
-						if err != nil {
-							// 请求被限流，执行相应的操作
-							fmt.Println("-------请求被限流了-------")
-						} else {
-							// 请求未被限流，执行相应的操作
-							fmt.Println("-------请求执行成功-------")
-						}
+						//err = limiter.Wait(context.Background())
+						//if err != nil {
+						//	// 请求被限流，执行相应的操作
+						//	fmt.Println("-------请求被限流了-------")
+						//} else {
+						//	// 请求未被限流，执行相应的操作
+						//	fmt.Println("-------请求执行成功-------")
+						//}
 						user, err = global.App.TwitterClient.RetrieveUserInfoByID(id)
 						if err != nil {
 							log.Println(err)
@@ -357,6 +357,6 @@ func TimedLookupCreator() {
 			offset += limit
 		}
 		group.Wait()
-		log.Println("更新结束主持人...")
+		log.Println("主持人更新结束...")
 	}
 }
